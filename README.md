@@ -1,15 +1,16 @@
-# EMUZ80_RP2040_PCB_MEZ68008_Firmware
+# EMUZ80_RP2040_PCB_MEZ68008_Firmware(MEZ68030ブランチ)
 
-![EMUZ80_RP2040_PCB_MEZ68008](./img/img1.jpg)
+![EMUZ80_RP2040_PCB_MEZ68030](./img/img1.jpg)
 
-@tendai22plus さんの **EMUZ80_RP2040_PCB** と @S_Okue さんの **MEZ68008** を使って、Z80 DIP40の信号を組み替え MC68008 を動作させることができます。
+@tendai22plus さんの **EMUZ80_RP2040_PCB** と @S_Okue さんの **MEZ68030** を使って、Z80 DIP40の信号を組み替え MC68030 のバスサイジング機能によって**外部8bitデータバス**で動作させることができます。
 
-作者: DragonBallEZ
+作者: @DragonBallEZ
 
 ## 概要
 
-秋月電子通商 AE-RP2040で MC68008が動作する EMUZ80_RP2040_PCB用のファームウェアです。
+秋月電子通商 AE-RP2040で MC68030が動作する EMUZ80_RP2040_PCB用のファームウェアです。
 
+- MC68030 がバスサイジング機能によって**外部8bitデータバス**で動作します。
 - RP2040 が 64KB RAM と MC6850 互換 ACIA (0xE000/0xE001) をエミュレート
 - RP2040 デュアルコア + 直接 SIO アクセスによる高速バスエミュレーション
 - USB CDC (stdio_usb) 経由でシリアルをブリッジ
@@ -19,9 +20,10 @@
 
 ## 対象ハードウェア
 
+- モトローラ MC68030 (PGA)
 - 秋月電子通商 AE-RP2040
 - @tendai22plus さん作 EMUZ80_RP2040_PCB
-- @S_Okue さん作 MEZ68008 (MC68008 用アダプタ)
+- @S_Okue さん作 MEZ68030 (MC68030 用アダプタ)
 
 ## ピン割り当て
 
@@ -33,8 +35,8 @@
 | 25   | R/W    | IN       | Read/Write               |
 | 26   | DS     | IN       | Data Strobe              |
 | 27   | DTACK  | OUT      | Data Transfer Acknowledge|
-| 28   | RESET  | OUT (OD) | リセット                 |
-| 29   | CLK    | OUT (PWM)| 68008 用クロック         |
+| 28   | RESET  | OUT (OD) | リセット(疑似オープンドレイン) |
+| 29   | CLK    | OUT (PWM)| MC68030 用クロック       |
 
 ## 回路図
 ![回路図1](./img/img2.jpg)
@@ -98,7 +100,7 @@ float desired_freq = 10000000.0f;    // CLK周波数
 
 - **電脳伝説さん(@vintagechips)さん** EMUZ80の作者
 - **@tendai22plus さん** — EMUZ80_RP2040_PCB の作者
-- **@S_Okue さん** — MEZ68008 の作者
+- **@S_Okue さん** — MEZ68008 / MEZ68030 の作者
 - **Lee Davison 氏** — EhBASIC (Enhanced BASIC) の作者
 - Raspberry Pi Foundation / Pico SDK チーム
 - EMUZ80 シリーズおよび 68000 関連の先駆的なプロジェクトに貢献された方々

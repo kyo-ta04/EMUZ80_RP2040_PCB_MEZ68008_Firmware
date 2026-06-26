@@ -171,7 +171,6 @@ void __time_critical_func(busemu)(void) {
             }
             drive_data_fast(data);
 //            printf("RW=%d ADRS=%04X DATA=%02X\n", rw, adrs, data);
-            
             dtack_low();  // DTACK low to acknowledge immediately
         } else {        // Write cycle
             data = (gpio >> DATA_SHIFT) & 0xFFu;
@@ -311,7 +310,7 @@ int main() {
    // float desired_freq = 24000000.0f;    // 24MHz
    // float desired_freq = 20000000.0f;    // 20MHz
    // float desired_freq = 16000000.0f;    // 16MHz
-    float desired_freq = 10000000.0f;    // 10MHz
+   float desired_freq = 10000000.0f;    // 10MHz
 
     pwm_set_frequency(slice_num, chan, desired_freq);
     sleep_ms(200);
