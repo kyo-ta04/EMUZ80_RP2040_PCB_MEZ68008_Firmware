@@ -36,7 +36,7 @@ pico_sdk_init()
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(EMUZ80_RP2040_PCB_MEZ68008_Firmware EMUZ80_RP2040_PCB_MEZ68008_Firmware.c
-        ehbasic.c
+        ehbasic030.c
         )
 
 pico_set_program_name(EMUZ80_RP2040_PCB_MEZ68008_Firmware "EMUZ80_RP2040_PCB_MEZ68008_Firmware")

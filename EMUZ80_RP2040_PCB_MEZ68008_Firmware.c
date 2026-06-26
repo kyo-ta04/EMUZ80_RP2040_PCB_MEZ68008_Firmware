@@ -2,8 +2,8 @@
  * EMUZ80_RP2040_PCB_MEZ68008_Firmware
  *
  * @tendai22plus さんの EMUZ80_RP2040_PCB と
- * @S_Okue さんの MEZ68008 を使って、
- * Z80 DIP40 フットプリントに MC68008 を組み替えて動作させるための
+ * @S_Okue さんの MEZ68030 を使って、
+ * Z80 DIP40 フットプリントに MC68030 を組み替えて動作させるための
  * RP2040 ファームウェアです。
  *
  * 秋月電子通商 AE-RP2040 ボード上で動作。
@@ -58,8 +58,8 @@ static uint8_t __attribute__((aligned(65536))) __not_in_flash("bus_memory")  mem
 // Flag to indicate if the bus emulation is running (shared between cores)
 static volatile bool    __attribute__((section(".scratch_x"))) emu_flg = false;  
 
-#include "ehbasic.h"  // EhBASIC program image
-// #include "ehbasic030.h"  // EhBASIC program image
+
+#include "ehbasic030.h"  // EhBASIC program image
 
 static void load_to_memory(uint8_t *mem, const uint8_t *data, size_t len, uint16_t offset) {
     memcpy(mem + offset, data, len);
@@ -125,7 +125,8 @@ static volatile uint8_t __attribute__((section(".scratch_x"))) uart_rx_data; // 
 static volatile bool __attribute__((section(".scratch_x"))) uart_tx_ready; // 送信可フラグ (true=Ready, false=Busy)
 static volatile bool __attribute__((section(".scratch_x"))) uart_rx_ready; // 受信完了フラグ (true=Ready, false=Empty)
 
-static volatile bool __attribute__((section(".scratch_x"))) exit_flag = false;
+// static volatile bool __attribute__((section(".scratch_x"))) exit_flag = false;
+static volatile bool exit_flag = false;
 
 
 //
@@ -137,7 +138,6 @@ void __time_critical_func(busemu)(void) {
     uart_rx_data = 0;      // 受信データ初期化
     uart_tx_ready = true;  // 送信準備完了
     uart_rx_ready = false; // 受信バッファは空
-    exit_flag = false;     // 終了フラグ初期化
 
     while (!(read_gpio_all() & DS_MASK)) {  // DS low(active) → wait for high
         tight_loop_contents(); 
@@ -190,10 +190,10 @@ void __time_critical_func(busemu)(void) {
         while (!(read_gpio_all() & DS_MASK)) {  // DS  low (active) → wait for rising edge
             tight_loop_contents();
         }
+        dtack_high();     // DTACK high to acknowledge immediately
         if (rw) {            // RWを再サンプリングせず、立下り時にキャプチャしたフラグを使用
             release_data_bus_fast();
         }
-        dtack_high();     // DTACK high to acknowledge immediately
         if (exit_flag) {
             break;  // exit on Ctrl-\ from UART
         }
@@ -252,7 +252,7 @@ int main() {
     stdio_init_all();
     sleep_ms(2000);
 
-    printf("EMUZ80_RP2040 MEZ68008 - 0.01\n");
+    printf("EMUZ80_RP2040 MEZ68030 - 0.01\n");
     if (clock_ok) {
         printf("sysclk %0.3fMHz\n", target_khz / 1000.0f);
     } else {
@@ -308,8 +308,10 @@ int main() {
     uint slice_num = pwm_gpio_to_slice_num(CLK_PIN);
     uint chan = pwm_gpio_to_channel(CLK_PIN);
 
-   float desired_freq = 10000000.0f;    // 10MHz
-//    float desired_freq = 8000000.0f;    // 8MHz
+   float desired_freq = 24000000.0f;    // 24MHz
+   // float desired_freq = 20000000.0f;    // 20MHz
+   // float desired_freq = 16000000.0f;    // 16MHz
+   // float desired_freq = 10000000.0f;    // 10MHz
 
    pwm_set_frequency(slice_num, chan, desired_freq);
     sleep_ms(200);
@@ -319,8 +321,8 @@ int main() {
     emu_flg = true;
 
     // Load program into simulated memory EhBASIC
-    load_to_memory(memory, EhBASIC, ehbasic_size, 0x0000);
-    printf("EhBASIC loaded to memory (size=%d bytes)\n", ehbasic_size);
+    load_to_memory(memory, EhBASIC030, ehbasic030_size, 0x0000);
+    printf("EhBASIC030 loaded to memory (size=%d bytes)\n", ehbasic030_size);
     // Wait for any keypress to proceed
 
     printf("RESET-OFF\n");
