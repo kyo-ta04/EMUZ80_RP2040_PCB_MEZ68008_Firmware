@@ -308,12 +308,12 @@ int main() {
     uint slice_num = pwm_gpio_to_slice_num(CLK_PIN);
     uint chan = pwm_gpio_to_channel(CLK_PIN);
 
-   float desired_freq = 24000000.0f;    // 24MHz
+   // float desired_freq = 24000000.0f;    // 24MHz
    // float desired_freq = 20000000.0f;    // 20MHz
    // float desired_freq = 16000000.0f;    // 16MHz
-   // float desired_freq = 10000000.0f;    // 10MHz
+    float desired_freq = 10000000.0f;    // 10MHz
 
-   pwm_set_frequency(slice_num, chan, desired_freq);
+    pwm_set_frequency(slice_num, chan, desired_freq);
     sleep_ms(200);
 
     printf("ROMエミュレータ起動 - core1\n");
